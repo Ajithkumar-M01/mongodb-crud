@@ -58,6 +58,44 @@ app.get("/api/todos/", async (req, res) => {
   }
 })
 
+app.get("/api/todos/:id", async (req, res) => { 
+  try {
+    const todo = await Todo.findById(req.params.id)
+    if (todo) {
+      res.status(200).json(todo)
+    } else {
+      res.status(404).json({message:`Todo with id: ${req.params.id} not found`})
+    }
+  } catch (err) {
+    res.status(500).json({message:"Error occured in fetching todos",err})
+  }
+})
+
+app.put("/api/todos/:id", async (req, res) => {
+  try {
+    const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    if (updatedTodo) {
+      res.status(200).json(updatedTodo)
+    } else {
+      res.status(404).json({ message: `Todo with id: ${req.params.id} not found` })
+    }
+  } catch (err) {
+    res.status(500).json({message:"Error occured in updating todo",err})
+  }
+})
+
+app.delete("/api/todos/:id", async (req, res) => {
+  try {
+    const deletedTodo = await Todo.findByIdAndDelete(req.params.id)
+    if (deletedTodo) {
+      res.status(200).json({message:`Todo with id: ${req.params.id} deleted`})
+    } else {
+      res.status(404).json({ message: `Todo with id: ${req.params.id} not found` })
+    }
+  } catch (err) {
+    res.status(500).json({message:"Error occured in deleting todo",err})
+  }
+})
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
